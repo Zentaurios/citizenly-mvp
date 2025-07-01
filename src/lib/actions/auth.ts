@@ -239,8 +239,8 @@ export async function getCurrentUser() {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      role: user.role,
-      verificationStatus: user.verificationStatus,
+      role: user.role as 'admin' | 'citizen' | 'politician',
+      verificationStatus: user.verificationStatus as 'pending' | 'verified' | 'rejected',
       emailVerified: true,
       isActive: user.isActive
     }
