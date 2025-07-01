@@ -3,6 +3,8 @@ import { getCurrentUser } from '@/lib/actions/auth'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import RepresentativesPage from '@/components/representatives/RepresentativesPage'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Representatives() {
   const user = await getCurrentUser()
   

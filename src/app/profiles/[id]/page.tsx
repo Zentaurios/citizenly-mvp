@@ -3,6 +3,8 @@ import { getCurrentUser } from '@/lib/actions/auth'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import PublicPoliticianProfile from '@/components/profile/PublicPoliticianProfile'
 
+export const dynamic = 'force-dynamic'
+
 // Sample politician data - in real app this would come from database
 const politicianProfiles = {
   'dina-titus': {

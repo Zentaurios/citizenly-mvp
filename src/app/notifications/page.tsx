@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import NotificationsPageSimple from '@/components/notifications/NotificationsPageSimple'
 
+export const dynamic = 'force-dynamic'
+
 export default async function NotificationsPageRoute() {
   const user = await getCurrentUser()
   

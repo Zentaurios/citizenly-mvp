@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import PollCreationForm from '@/components/polls/PollCreationForm';
 
+export const dynamic = 'force-dynamic'
+
 export default async function CreatePollPage() {
   const session = await auth();
   

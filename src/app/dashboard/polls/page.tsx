@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import PoliticianDashboard from '@/components/polls/PoliticianDashboard';
 
+export const dynamic = 'force-dynamic'
+
 export default async function PollsDashboardPage() {
   const session = await auth();
   

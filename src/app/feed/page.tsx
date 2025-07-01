@@ -3,6 +3,8 @@ import { getCurrentUser } from '@/lib/actions/auth'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import SocialFeed from '@/components/feed/SocialFeed'
 
+export const dynamic = 'force-dynamic'
+
 export default async function FeedPage() {
   const user = await getCurrentUser()
   

@@ -4,6 +4,8 @@ import { LegislativeFeed } from '@/components/legislative/LegislativeFeed';
 import { Card } from '@/components/ui/card';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
+export const dynamic = 'force-dynamic'
+
 export default async function LegislativePage() {
   // Verify authentication using the same method as dashboard
   const user = await getCurrentUser();

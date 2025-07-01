@@ -5,6 +5,8 @@ import CitizenDashboard from '@/components/dashboard/CitizenDashboard'
 import PoliticianDashboard from '@/components/dashboard/PoliticianDashboard'
 import VerificationRequired from '@/components/dashboard/VerificationRequired'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const user = await getCurrentUser()
   
