@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
         title: 'Nevada Clean Energy Initiative',
         description: 'A comprehensive bill to expand renewable energy infrastructure across Nevada.',
         importance: 8,
-        createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
+        createdAt: '2024-01-15T10:00:00Z',
+        lastUpdated: '2024-01-15T10:00:00Z',
         source: 'Nevada Legislature'
       },
       {
@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
         title: 'Assembly Bill 123 - Education Funding',
         description: 'Your representative voted YES on increased education funding.',
         importance: 7,
-        createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
+        createdAt: '2024-01-15T10:00:00Z',
+        lastUpdated: '2024-01-15T10:00:00Z',
         source: 'Nevada Assembly'
       }
     ];
@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
         title: 'Nevada Clean Energy Initiative',
         description: 'A comprehensive bill to expand renewable energy infrastructure across Nevada.',
         importance: 8,
-        createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
+        createdAt: '2024-01-15T10:00:00Z',
+        lastUpdated: '2024-01-15T10:00:00Z',
         source: 'Nevada Legislature'
       },
       {
@@ -111,8 +111,8 @@ export async function POST(request: NextRequest) {
         title: 'Assembly Bill 123 - Education Funding',
         description: 'Your representative voted YES on increased education funding.',
         importance: 7,
-        createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
+        createdAt: '2024-01-15T10:00:00Z',
+        lastUpdated: '2024-01-15T10:00:00Z',
         source: 'Nevada Assembly'
       }
     ];
