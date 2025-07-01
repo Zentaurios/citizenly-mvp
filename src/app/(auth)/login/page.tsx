@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { loginWithCookie } from '@/lib/actions/cookie-auth'
 
-export default function LoginPage() {
+function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -48,30 +48,19 @@ export default function LoginPage() {
           <Link href="/" className="text-2xl font-bold citizenly-text-gradient">
             Citizenly
           </Link>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+          <h1 className="mt-6 text-3xl font-bold text-gray-900">
             Welcome back
-          </h2>
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account to continue
+            Sign in to your account
           </p>
         </div>
 
+        {/* Card */}
         <Card>
-          <CardHeader>
-            <CardTitle>Sign In</CardTitle>
-            <CardDescription>
-              Enter your email and password to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="p-8">
             <form action={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-md text-sm">
-                  {error}
-                </div>
-              )}
-
-              <div className="space-y-2">
+              <div>
                 <Label htmlFor="email">Email address</Label>
                 <Input
                   id="email"
@@ -79,11 +68,13 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  placeholder="Enter your email"
+                  className="mt-1"
+                  placeholder="you@example.com"
+                  disabled={isLoading}
                 />
               </div>
 
-              <div className="space-y-2">
+              <div>
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -91,92 +82,81 @@ export default function LoginPage() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  placeholder="Enter your password"
+                  className="mt-1"
+                  placeholder="••••••••"
+                  disabled={isLoading}
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="text-sm">
-                  <Link 
-                    href="/forgot-password" 
-                    className="text-purple-600 hover:text-purple-500"
-                  >
-                    Forgot your password?
-                  </Link>
+              {redirectTo && (
+                <input type="hidden" name="redirect" value={redirectTo} />
+              )}
+
+              {error && (
+                <div className="text-red-600 text-sm text-center">
+                  {error}
                 </div>
-              </div>
+              )}
 
               <Button
                 type="submit"
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <>
-                    <div className="loading-spinner mr-2" />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign in'
-                )}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
+            {/* Test Accounts */}
+            <div className="mt-6 border-t pt-6">
+              <p className="text-sm text-gray-600 text-center mb-3">
+                Demo Accounts:
+              </p>
+              <div className="space-y-2 text-xs text-gray-500">
+                <div className="flex justify-between">
+                  <span>Citizen:</span>
+                  <span className="font-mono">citizen@test.com / password123</span>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">New to Citizenly?</span>
+                <div className="flex justify-between">
+                  <span>Politician:</span>
+                  <span className="font-mono">politician@test.com / password123</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Admin:</span>
+                  <span className="font-mono">admin@test.com / password123</span>
                 </div>
               </div>
+            </div>
 
-              <div className="mt-6">
-                <Link href="/register">
-                  <Button variant="outline" className="w-full">
-                    Create an account
-                  </Button>
+            {/* Footer Links */}
+            <div className="mt-6 flex flex-col space-y-2 text-sm text-center">
+              <span className="text-gray-600">
+                Don't have an account?{' '}
+                <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                  Sign up
                 </Link>
-              </div>
+              </span>
+              <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+                Forgot your password?
+              </Link>
             </div>
           </CardContent>
         </Card>
-
-        {/* MVP Notice */}
-        <div className="mt-8 text-center">
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <p className="text-sm text-purple-700">
-              <strong>MVP Launch:</strong> Currently available for Nevada residents. 
-              <Link href="/about" className="underline hover:no-underline">
-                Learn more about our expansion plans
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        {/* Test Account Info (for development) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 text-center space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-700">
-                <strong>Test Accounts:</strong><br />
-                Citizen: citizen@test.com / password123<br />
-                Politician: politician@test.com / password123<br />
-                Admin: admin@citizenly.com / admin123
-              </p>
-            </div>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm text-green-700">
-                <strong>Debug Tools:</strong><br />
-                <Link href="/debug-auth" className="underline hover:no-underline">
-                  Check Authentication Status
-                </Link>
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-gray-600">Loading...</div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }

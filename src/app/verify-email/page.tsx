@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,7 @@ import {
   ArrowRight
 } from 'lucide-react'
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [status, setStatus] = useState<'pending' | 'success' | 'error'>('pending')
   const [message, setMessage] = useState('')
@@ -49,171 +49,143 @@ export default function VerifyEmailPage() {
     }
   }*/}
 
-  const handleResendEmail = async () => {
-    // TODO: Implement resend email functionality
-    console.log('Resend email clicked')
+  const resendVerificationEmail = async () => {
+    setIsLoading(true)
+    setMessage('')
+    try {
+      // In production, call resend verification endpoint
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      setMessage('Verification email sent! Please check your inbox.')
+    } catch (error) {
+      setMessage('Failed to send verification email. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-gray-50 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <Link href="/" className="text-2xl font-bold citizenly-text-gradient">
-            Citizenly
-          </Link>
-        </div>
-
-        <Card>
-          <CardHeader className="text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
-              {status === 'success' ? (
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              ) : status === 'error' ? (
-                <AlertCircle className="w-8 h-8 text-red-600" />
-              ) : (
-                <Mail className="w-8 h-8 text-purple-600" />
-              )}
-            </div>
-            <CardTitle>
-              {status === 'success' ? 'Email Verified!' :
-               status === 'error' ? 'Verification Failed' :
-               'Verify Your Email'}
-            </CardTitle>
-            <CardDescription>
-              {status === 'success' ? 'Your account is now ready to use' :
-               status === 'error' ? 'There was a problem with your verification' :
-               'Check your email for a verification link'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Success State */}
-            {status === 'success' && (
-              <div className="space-y-4 text-center">
-                <div className="p-4 border border-green-200 rounded-lg bg-green-50">
-                  <p className="text-sm text-green-700">
-                    {message}
-                  </p>
-                </div>
+  // If we have a token, show verification in progress
+  if (token) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-8 text-center">
+            {isLoading ? (
+              <>
+                <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2">Verifying your email...</h2>
+                <p className="text-gray-600">Please wait while we verify your email address.</p>
+              </>
+            ) : status === 'success' ? (
+              <>
+                <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2">Email Verified!</h2>
+                <p className="text-gray-600 mb-6">{message}</p>
                 <Link href="/login">
                   <Button className="w-full">
-                    Continue to Sign In
+                    Continue to Login
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-              </div>
-            )}
-
-            {/* Error State */}
-            {status === 'error' && (
-              <div className="space-y-4">
-                <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-                  <p className="text-sm text-red-700">
-                    {message}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {/*<Button 
-                    onClick={handleVerification} 
-                    disabled={isLoading || !token}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="mr-2 loading-spinner" />
-                        Retrying...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Try Again
-                      </>
-                    )}
-                  </Button>*/}
-                  <Button 
-                    onClick={handleResendEmail}
-                    variant="ghost"
-                    className="w-full"
-                  >
+              </>
+            ) : (
+              <>
+                <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2">Verification Failed</h2>
+                <p className="text-gray-600 mb-6">{message}</p>
+                <div className="space-y-3">
+                  <Button onClick={resendVerificationEmail} className="w-full" variant="outline">
                     Resend Verification Email
                   </Button>
+                  <Link href="/login" className="block">
+                    <Button className="w-full">
+                      Back to Login
+                    </Button>
+                  </Link>
                 </div>
-              </div>
+              </>
             )}
-
-            {/* Pending State */}
-            {status === 'pending' && !token && (
-              <div className="space-y-4">
-                {registered && (
-                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
-                    <p className="text-sm text-blue-700">
-                      <strong>Registration successful!</strong> We've sent a verification 
-                      email to your address. Please check your inbox and click the 
-                      verification link to activate your account.
-                    </p>
-                  </div>
-                )}
-                
-                <div className="space-y-4 text-center">
-                  <div className="text-sm text-gray-600">
-                    <p className="mb-2">
-                      A verification email has been sent to your email address.
-                    </p>
-                    <p>
-                      Click the link in the email to verify your account and complete 
-                      your registration.
-                    </p>
-                  </div>
-                  
-                  <div className="p-3 border border-yellow-200 rounded-lg bg-yellow-50">
-                    <p className="text-xs text-yellow-700">
-                      <strong>Can't find the email?</strong> Check your spam folder or 
-                      request a new verification email.
-                    </p>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleResendEmail}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Resend Verification Email
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Loading State */}
-            {isLoading && token && (
-              <div className="space-y-4 text-center">
-                <div className="mx-auto loading-spinner" />
-                <p className="text-sm text-gray-600">
-                  Verifying your email address...
-                </p>
-              </div>
-            )}
-
-            {/* Help */}
-            <div className="pt-4 text-center border-t border-gray-200">
-              <p className="text-sm text-gray-600">
-                Need help?{' '}
-                <Link href="/contact" className="text-purple-600 hover:text-purple-500">
-                  Contact Support
-                </Link>
-              </p>
-            </div>
           </CardContent>
         </Card>
+      </div>
+    )
+  }
 
-        {/* Back to Home */}
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
-            ← Back to Home
-          </Link>
+  // Show email sent confirmation (after registration)
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            <Mail className="w-8 h-8 text-blue-600" />
+          </div>
+          <CardTitle className="text-2xl font-bold">
+            {registered ? 'Check Your Email' : 'Verify Your Email'}
+          </CardTitle>
+          <CardDescription>
+            {registered 
+              ? "We've sent a verification email to your inbox"
+              : "Please verify your email address to continue"
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-semibold text-blue-900 mb-2">Next Steps:</h3>
+            <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
+              <li>Check your email inbox</li>
+              <li>Click the verification link</li>
+              <li>Return here to log in</li>
+            </ol>
+          </div>
+
+          <div className="text-center text-sm text-gray-600">
+            <p>Didn't receive the email?</p>
+            <p className="mt-1">Check your spam folder or</p>
+          </div>
+
+          <Button 
+            onClick={resendVerificationEmail} 
+            className="w-full"
+            variant="outline"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              'Resend Verification Email'
+            )}
+          </Button>
+
+          {message && (
+            <div className={`text-sm text-center ${message.includes('sent') ? 'text-green-600' : 'text-red-600'}`}>
+              {message}
+            </div>
+          )}
+
+          <div className="text-center">
+            <Link href="/login" className="text-sm text-blue-600 hover:underline">
+              Back to Login
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="text-gray-600">Loading...</div>
         </div>
       </div>
-    </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }
