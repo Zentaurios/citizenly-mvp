@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
 
     // Fetch feed items using the static method
     const feedItems = await LegislativeDatabase.getUserFeed(user.id, {
-      type: type ? [type] : undefined,
+      type: filters.type || undefined,
+      subjects: filters.subjects || undefined,
       limit,
       offset: (page - 1) * limit
     });
