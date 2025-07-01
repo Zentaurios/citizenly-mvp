@@ -28,8 +28,9 @@ export async function GET(request: NextRequest) {
           console.log('- JWT payload:', jwtPayload)
         }
       } catch (jwtError) {
-        console.log('- JWT verification failed:', jwtError.message)
-        error = `JWT Error: ${jwtError.message}`
+        const errorMessage = jwtError instanceof Error ? jwtError.message : 'Unknown JWT error'
+        console.log('- JWT verification failed:', errorMessage)
+        error = `JWT Error: ${errorMessage}`
       }
     }
     

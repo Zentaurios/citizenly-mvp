@@ -42,7 +42,7 @@ function createErrorResponse(message: string, status: number = 400, details?: an
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
@@ -51,8 +51,11 @@ export async function GET(
       return createErrorResponse('Authentication required', 401);
     }
 
+    // Await params for Next.js 15
+    const resolvedParams = await params;
+    
     // Validate poll ID
-    const pollId = params.id;
+    const pollId = resolvedParams.id;
     if (!pollId || pollId.length !== 36) {
       return createErrorResponse('Invalid poll ID format', 400);
     }
@@ -98,7 +101,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
@@ -107,8 +110,11 @@ export async function PUT(
       return createErrorResponse('Authentication required', 401);
     }
 
+    // Await params for Next.js 15
+    const resolvedParams = await params;
+    
     // Validate poll ID
-    const pollId = params.id;
+    const pollId = resolvedParams.id;
     if (!pollId || pollId.length !== 36) {
       return createErrorResponse('Invalid poll ID format', 400);
     }
@@ -178,7 +184,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
@@ -187,8 +193,11 @@ export async function DELETE(
       return createErrorResponse('Authentication required', 401);
     }
 
+    // Await params for Next.js 15
+    const resolvedParams = await params;
+    
     // Validate poll ID
-    const pollId = params.id;
+    const pollId = resolvedParams.id;
     if (!pollId || pollId.length !== 36) {
       return createErrorResponse('Invalid poll ID format', 400);
     }

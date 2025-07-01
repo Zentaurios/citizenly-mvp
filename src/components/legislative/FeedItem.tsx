@@ -38,7 +38,7 @@ export function FeedItem({ item }: FeedItemProps) {
     const billNumber = item.bill_number || item.metadata?.bill_number?.replace(/"/g, '');
     if (billNumber) {
       // Map known bill numbers to their IDs for testing
-      const billMapping = {
+      const billMapping: { [key: string]: number } = {
         'AB1': 1889861,
         'AB2': 1889867, 
         'AB3': 1889869

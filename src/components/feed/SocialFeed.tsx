@@ -14,7 +14,7 @@ const samplePosts = [
       name: 'Rep. Dina Titus',
       title: 'U.S. Representative',
       district: 'Nevada District 1',
-      type: 'politician'
+      type: 'politician' as const
     },
     content: "Just voted YES on the Infrastructure Investment Act. Nevada needs modern transportation systems to support our growing economy. What infrastructure priorities matter most to you?",
     timestamp: '2 hours ago',
@@ -26,7 +26,7 @@ const samplePosts = [
     author: {
       name: 'Sarah M.',
       civicPoints: 1250,
-      type: 'citizen'
+      type: 'citizen' as const
     },
     content: "Participated in 3 polls this week about local education funding. Love seeing how our input directly reaches our reps! 🗳️ #CivicEngagement",
     timestamp: '4 hours ago',
@@ -39,7 +39,7 @@ const samplePosts = [
       name: 'Rep. Susie Lee',
       title: 'U.S. Representative', 
       district: 'Nevada District 3',
-      type: 'politician'
+      type: 'politician' as const
     },
     content: "New poll live now: Should Nevada expand renewable energy tax incentives? Your voice matters in shaping our energy future.",
     timestamp: '6 hours ago',
@@ -52,7 +52,7 @@ const samplePosts = [
     author: {
       name: 'Mike T.',
       civicPoints: 890,
-      type: 'citizen'
+      type: 'citizen' as const
     },
     content: "Great town hall meeting yesterday with Senator Cortez Masto. Housing affordability is a real issue we need to address statewide.",
     timestamp: '1 day ago',
@@ -65,7 +65,7 @@ const samplePosts = [
       name: 'Sen. Catherine Cortez Masto',
       title: 'U.S. Senator',
       district: 'Nevada',
-      type: 'politician'
+      type: 'politician' as const
     },
     content: "Introducing the Nevada Housing Opportunity Act this week. This bipartisan bill will create 50,000 new affordable housing units across our state.",
     timestamp: '1 day ago',
@@ -88,7 +88,7 @@ export default function SocialFeed({ user }: { user: any }) {
       author: {
         name: `${user.firstName} ${user.lastName}`,
         civicPoints: 1100,
-        type: 'citizen'
+        type: 'citizen' as const
       },
       content: newPost,
       timestamp: 'Just now',

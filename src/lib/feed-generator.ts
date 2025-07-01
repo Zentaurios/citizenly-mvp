@@ -23,8 +23,8 @@ export class FeedGenerator {
   static async createFeedItem(params: FeedItemParams): Promise<string> {
     const { type, bill, rollCall, actionDate, metadata = {} } = params;
     
-    let title: string;
-    let description: string;
+    let title: string = '';
+    let description: string = '';
     let districts: string[] = [];
     let subjects: string[] = [];
     let billId: number | undefined;
@@ -284,7 +284,7 @@ export class FeedGenerator {
     `);
 
     const itemsByType: Record<string, number> = {};
-    typeResult.rows.forEach(row => {
+    typeResult.rows.forEach((row: any) => {
       itemsByType[row.type] = parseInt(row.count);
     });
 

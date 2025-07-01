@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LegislativeDatabase } from '@/lib/database/legislative';
-import { verifyAuth } from '@/lib/auth/utils';
+import { getCurrentUser } from '@/lib/actions/auth';
 
 interface InterestsRequest {
   subjects?: string[];
@@ -11,15 +11,15 @@ interface InterestsRequest {
 export async function GET(request: NextRequest) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.success || !authResult.user) {
+    const user = await getCurrentUser();
+    if (!user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' }, 
         { status: 401 }
       );
     }
 
-    const userId = authResult.user.id;
+    const userId = user.id;
     const interests = await LegislativeDatabase.getUserLegislativeInterests(userId);
 
     return NextResponse.json({
@@ -42,15 +42,15 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.success || !authResult.user) {
+    const user = await getCurrentUser();
+    if (!user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' }, 
         { status: 401 }
       );
     }
 
-    const userId = authResult.user.id;
+    const userId = user.id;
     const body: InterestsRequest = await request.json();
 
     // Validate the request body

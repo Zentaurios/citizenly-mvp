@@ -20,7 +20,7 @@ interface PoliticianDashboardProps {
 export default function PoliticianDashboard({ user }: PoliticianDashboardProps) {
   // For now, let's use the enhanced dashboard for verified politicians
   // and keep the simple one for unverified politicians
-  if (user.verification_status === 'verified') {
+  if (user.verificationStatus === 'verified') {
     return <EnhancedPoliticianDashboard user={user} />
   }
 
@@ -342,7 +342,7 @@ export default function PoliticianDashboard({ user }: PoliticianDashboardProps) 
       </div>
 
       {/* Verification Status */}
-      {user.verificationStatus !== 'verified' && (
+      {(user.verificationStatus === 'pending' || user.verificationStatus === 'rejected') && (
         <Card className="bg-yellow-50 border-yellow-200">
           <CardContent className="p-6">
             <div className="flex items-center">

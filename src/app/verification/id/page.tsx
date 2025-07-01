@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { startIDVerification } from '@/lib/actions/auth-supabase'
 import { 
   Shield, 
   FileText, 
@@ -52,7 +51,7 @@ export default function IDVerificationPage() {
     }))
   }
 
-  const handleSubmit = async () => {
+  {/*const handleSubmit = async () => {
     setIsLoading(true)
     setError('')
 
@@ -74,7 +73,7 @@ export default function IDVerificationPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }*/}
 
   const canProceed = () => {
     return formData.firstName && formData.lastName && formData.dateOfBirth && 
@@ -82,17 +81,17 @@ export default function IDVerificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen px-4 py-12 bg-gray-50 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-            <Shield className="h-8 w-8 text-purple-600" />
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
+            <Shield className="w-8 h-8 text-purple-600" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
             ID Verification
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="mt-2 text-gray-600">
             Verify your identity with a government-issued photo ID
           </p>
         </div>
@@ -145,7 +144,7 @@ export default function IDVerificationPage() {
           </CardHeader>
           <CardContent>
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-md text-sm mb-6">
+              <div className="px-3 py-2 mb-6 text-sm text-red-600 border border-red-200 rounded-md bg-red-50">
                 {error}
               </div>
             )}
@@ -153,7 +152,7 @@ export default function IDVerificationPage() {
             {/* Step 1: Document Information */}
             {step === 1 && (
               <div className="space-y-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
                   <div className="flex items-start">
                     <Shield className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                     <div className="text-sm text-blue-700">
@@ -200,7 +199,7 @@ export default function IDVerificationPage() {
                     id="documentType"
                     value={formData.documentType}
                     onChange={(e) => handleInputChange('documentType', e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+                    className="flex w-full h-10 px-3 py-2 text-sm bg-white border border-gray-300 rounded-md"
                   >
                     {DOCUMENT_TYPES.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -226,7 +225,7 @@ export default function IDVerificationPage() {
                       id="issuingState"
                       value={formData.issuingState}
                       onChange={(e) => handleInputChange('issuingState', e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+                      className="flex w-full h-10 px-3 py-2 text-sm bg-white border border-gray-300 rounded-md"
                     >
                       {US_STATES.map((state) => (
                         <option key={state} value={state}>
@@ -260,7 +259,7 @@ export default function IDVerificationPage() {
             {/* Step 2: Document Upload (Mock for MVP) */}
             {step === 2 && (
               <div className="space-y-6">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
                   <div className="flex items-start">
                     <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
                     <div className="text-sm text-yellow-700">
@@ -270,16 +269,16 @@ export default function IDVerificationPage() {
                   </div>
                 </div>
 
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <div className="p-8 text-center border-2 border-gray-300 border-dashed rounded-lg">
+                  <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                  <h3 className="mb-2 text-lg font-medium text-gray-900">
                     Upload Document Photo
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="mb-4 text-sm text-gray-600">
                     Take a clear photo of the front of your {DOCUMENT_TYPES.find(t => t.value === formData.documentType)?.label}
                   </p>
                   <Button variant="outline" className="mb-4">
-                    <FileText className="h-4 w-4 mr-2" />
+                    <FileText className="w-4 h-4 mr-2" />
                     Choose File
                   </Button>
                   <div className="text-xs text-gray-500">
@@ -289,21 +288,21 @@ export default function IDVerificationPage() {
 
                 <div className="space-y-4">
                   <h4 className="font-medium text-gray-900">Photo Guidelines:</h4>
-                  <ul className="text-sm text-gray-600 space-y-2">
+                  <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                       Ensure all four corners of the document are visible
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                       Photo should be clear and well-lit
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                       Avoid glare or shadows on the document
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                       Make sure all text is readable
                     </li>
                   </ul>
@@ -317,33 +316,33 @@ export default function IDVerificationPage() {
                   >
                     Back
                   </Button>
-                  <Button
+                  {/*<Button
                     onClick={handleSubmit}
                     disabled={isLoading}
                     className="w-full"
                   >
                     {isLoading ? (
                       <>
-                        <div className="loading-spinner mr-2" />
+                        <div className="mr-2 loading-spinner" />
                         Processing...
                       </>
                     ) : (
                       'Submit for Verification'
                     )}
-                  </Button>
+                  </Button>*/}
                 </div>
               </div>
             )}
 
             {/* Step 3: Success */}
             {step === 3 && (
-              <div className="text-center space-y-6">
-                <div className="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="space-y-6 text-center">
+                <div className="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="mb-2 text-lg font-medium text-gray-900">
                     Verification Submitted Successfully!
                   </h3>
                   <p className="text-gray-600">
@@ -352,8 +351,8 @@ export default function IDVerificationPage() {
                   </p>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-blue-700 text-sm">
+                <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                  <p className="text-sm text-blue-700">
                     <strong>Processing Time:</strong> ID verification typically takes 
                     2-24 hours. You can continue using Citizenly with limited access 
                     while verification is pending.

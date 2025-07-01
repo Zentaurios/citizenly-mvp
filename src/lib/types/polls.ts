@@ -476,14 +476,4 @@ export interface Session {
   };
 }
 
-export default {
-  Poll,
-  PollResponse,
-  Notification,
-  PollAnalytics,
-  NotificationPreferences,
-  CreatePollInput,
-  SubmitPollResponseInput,
-  PollResultsResponse,
-  RealTimePollUpdate
-};
+// All types are exported individually above

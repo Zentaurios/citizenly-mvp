@@ -131,7 +131,7 @@ function createErrorResponse(message: string, status: number = 400, details?: an
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get IP and user agent for fraud detection
@@ -155,8 +155,11 @@ export async function POST(
       return createErrorResponse('Too many votes. Please wait a moment.', 429);
     }
 
+    // Await params for Next.js 15
+    const resolvedParams = await params;
+    
     // Validate poll ID
-    const pollId = params.id;
+    const pollId = resolvedParams.id;
     if (!pollId || pollId.length !== 36) {
       return createErrorResponse('Invalid poll ID format', 400);
     }
@@ -265,7 +268,7 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Rate limiting - 30 requests per minute per IP
@@ -282,8 +285,11 @@ export async function GET(
       return createErrorResponse('Authentication required', 401);
     }
 
+    // Await params for Next.js 15
+    const resolvedParams = await params;
+    
     // Validate poll ID
-    const pollId = params.id;
+    const pollId = resolvedParams.id;
     if (!pollId || pollId.length !== 36) {
       return createErrorResponse('Invalid poll ID format', 400);
     }
@@ -338,16 +344,16 @@ export async function OPTIONS(request: NextRequest) {
 // Clean up old rate limit entries periodically
 setInterval(() => {
   const now = Date.now();
-  for (const [key, entry] of rateLimits.entries()) {
+  rateLimits.forEach((entry, key) => {
     if (now > entry.resetTime) {
       rateLimits.delete(key);
     }
-  }
+  });
   
   // Clean up old suspicious activity entries (older than 1 hour)
-  for (const [key, activity] of suspiciousActivity.entries()) {
+  suspiciousActivity.forEach((activity, key) => {
     if (now - activity.lastAttempt > 60 * 60 * 1000) {
       suspiciousActivity.delete(key);
     }
-  }
+  });
 }, 5 * 60 * 1000); // Run cleanup every 5 minutes

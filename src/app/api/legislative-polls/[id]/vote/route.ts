@@ -255,8 +255,8 @@ export async function POST(
         GROUP BY simple_response
       `, [pollId]);
 
-      const counts = { approve: 0, disapprove: 0, no_opinion: 0 };
-      countsResult.rows.forEach(row => {
+      const counts: { [key: string]: number } = { approve: 0, disapprove: 0, no_opinion: 0 };
+      countsResult.rows.forEach((row: any) => {
         counts[row.simple_response] = parseInt(row.count);
       });
 

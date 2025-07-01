@@ -314,7 +314,7 @@ export class LegislativeDatabase {
       WHERE bs.bill_id = $1 AND l.active = true
     `, [billId]);
     
-    return result.rows.map(row => row.district);
+    return result.rows.map((row: any) => row.district);
   }
 
   /**

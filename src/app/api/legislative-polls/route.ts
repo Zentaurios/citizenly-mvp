@@ -165,13 +165,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       poll: {
-        id: result.poll.id,
+        id: result.poll?.id,
         bill_id: validatedData.bill_id,
         question: validatedData.question,
         target_districts: validatedData.target_districts,
         expires_at: expiresAt.toISOString(),
-        poll_url: `/polls/${result.poll.id}`,
-        created_at: result.poll.created_at
+        poll_url: `/polls/${result.poll?.id}`,
+        created_at: result.poll?.created_at
       },
       message: 'Legislative poll created successfully'
     }, { status: 201 });
@@ -278,7 +278,7 @@ export async function GET(request: NextRequest) {
     const result = await db.query(pollsQuery, queryParams);
 
     // Transform to simplified MVP format
-    const simplifiedPolls = result.rows.map(poll => ({
+    const simplifiedPolls = result.rows.map((poll: any) => ({
       id: poll.id,
       bill_id: poll.context_bill_id,
       question: poll.question || poll.title,
