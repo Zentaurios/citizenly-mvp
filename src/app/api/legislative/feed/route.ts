@@ -27,31 +27,12 @@ export async function GET(request: NextRequest) {
     // Get user's district for personalization (fallback to default)
     const userDistrict = district || '3'; // Default to district 3 for test users
 
-    // For MVP: Return mock legislative feed data
-    const mockFeedItems = [
-      {
-        id: '1',
-        type: 'bill',
-        title: 'Nevada Clean Energy Initiative',
-        description: 'A comprehensive bill to expand renewable energy infrastructure across Nevada.',
-        importance: 8,
-        createdAt: '2024-01-15T10:00:00Z',
-        lastUpdated: '2024-01-15T10:00:00Z',
-        source: 'Nevada Legislature'
-      },
-      {
-        id: '2', 
-        type: 'vote',
-        title: 'Assembly Bill 123 - Education Funding',
-        description: 'Your representative voted YES on increased education funding.',
-        importance: 7,
-        createdAt: '2024-01-15T10:00:00Z',
-        lastUpdated: '2024-01-15T10:00:00Z',
-        source: 'Nevada Assembly'
-      }
-    ];
-    
-    const feedItems = mockFeedItems.slice((page - 1) * limit, page * limit);
+    // Fetch feed items using the static method
+    const feedItems = await LegislativeDatabase.getUserFeed(user.id, {
+      type: type ? [type] : undefined,
+      limit,
+      offset: (page - 1) * limit
+    });
 
     return NextResponse.json({
       items: feedItems,
@@ -93,31 +74,12 @@ export async function POST(request: NextRequest) {
     // Get user's district for personalization (fallback to default)
     const userDistrict = '3'; // Default to district 3 for test users
 
-    // For MVP: Return mock legislative feed data
-    const mockFeedItems = [
-      {
-        id: '1',
-        type: 'bill',
-        title: 'Nevada Clean Energy Initiative',
-        description: 'A comprehensive bill to expand renewable energy infrastructure across Nevada.',
-        importance: 8,
-        createdAt: '2024-01-15T10:00:00Z',
-        lastUpdated: '2024-01-15T10:00:00Z',
-        source: 'Nevada Legislature'
-      },
-      {
-        id: '2', 
-        type: 'vote',
-        title: 'Assembly Bill 123 - Education Funding',
-        description: 'Your representative voted YES on increased education funding.',
-        importance: 7,
-        createdAt: '2024-01-15T10:00:00Z',
-        lastUpdated: '2024-01-15T10:00:00Z',
-        source: 'Nevada Assembly'
-      }
-    ];
-    
-    const feedItems = mockFeedItems.slice((page - 1) * limit, page * limit);
+    // Fetch feed items using the static method
+    const feedItems = await LegislativeDatabase.getUserFeed(user.id, {
+      type: type ? [type] : undefined,
+      limit,
+      offset: (page - 1) * limit
+    });
 
     return NextResponse.json({
       success: true,
