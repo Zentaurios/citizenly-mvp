@@ -75,7 +75,7 @@ export async function loginWithCookie(formData: FormData) {
     // Skip database update for MVP
 
     console.log('Login successful for:', email, 'role:', user.role)
-    return { success: true, user: { id: user.id, email: user.email, role: user.role } }
+    return { success: true, user: { id: user.id, email: email, role: user.role } }
 
   } catch (error) {
     console.error('Login with cookie error:', error)
