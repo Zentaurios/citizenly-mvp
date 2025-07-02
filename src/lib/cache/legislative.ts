@@ -27,9 +27,26 @@ class LegislativeCache {
    */
   async getUserFeed(userId: string, filtersHash: string): Promise<any[] | null> {
     try {
+      // Skip cache in development when using mock data
+      if (process.env.USE_MOCK_LEGISLATIVE === 'true') {
+        return null;
+      }
+      
       const key = `feed:user:${userId}:${filtersHash}`;
       const cached = await this.redis.get(key);
-      return cached ? JSON.parse(cached as string) : null;
+      
+      if (!cached) {
+        return null;
+      }
+      
+      // Handle potential JSON parsing errors
+      try {
+        return JSON.parse(cached as string);
+      } catch (parseError) {
+        console.warn('Invalid cached data, clearing cache for key:', key);
+        await this.redis.del(key);
+        return null;
+      }
     } catch (error) {
       console.error('Error getting cached user feed:', error);
       return null;
@@ -38,6 +55,11 @@ class LegislativeCache {
 
   async setUserFeed(userId: string, filtersHash: string, items: any[]): Promise<void> {
     try {
+      // Skip cache in development when using mock data
+      if (process.env.USE_MOCK_LEGISLATIVE === 'true') {
+        return;
+      }
+      
       const key = `feed:user:${userId}:${filtersHash}`;
       await this.redis.setex(key, 900, JSON.stringify(items)); // 15 minutes
     } catch (error) {

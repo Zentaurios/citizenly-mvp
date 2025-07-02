@@ -45,43 +45,42 @@ function checkPassword(email: string, inputPassword: string): boolean {
   return testAccounts[email as keyof typeof testAccounts] === inputPassword
 }
 
-// Login action
+// Login action - MVP version (database-free)
 export async function login(formData: FormData) {
   try {
-    const rawData = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    if (!email || !password) {
+      return { error: 'Email and password are required' }
     }
 
-    // Validate input
-    const validatedData = LoginSchema.parse(rawData)
-
-    // Check if user exists
-    const result = await db.query(
-      'SELECT id, email, role, verification_status, is_active FROM users WHERE email = $1',
-      [validatedData.email]
-    )
-
-    if (result.rows.length === 0) {
+    // Simple password check for MVP
+    const testAccounts = {
+      'admin@citizenly.com': 'admin123',
+      'citizen@test.com': 'password123',
+      'politician@test.com': 'password123'
+    }
+    
+    if (testAccounts[email as keyof typeof testAccounts] !== password) {
       return { error: 'Invalid email or password' }
     }
 
-    const user = result.rows[0]
-
-    // Check if account is active
-    if (!user.is_active) {
-      return { error: 'Account is deactivated. Please contact support.' }
+    // For MVP: Use hardcoded user data for test accounts
+    const testUsers = {
+      'admin@citizenly.com': { id: 'admin-1', role: 'admin', verification_status: 'verified', is_active: true },
+      'citizen@test.com': { id: 'citizen-1', role: 'citizen', verification_status: 'verified', is_active: true },
+      'politician@test.com': { id: 'politician-1', role: 'politician', verification_status: 'verified', is_active: true }
     }
-
-    // Simple password verification for MVP
-    if (!checkPassword(validatedData.email, validatedData.password)) {
+    
+    const user = testUsers[email as keyof typeof testUsers]
+    if (!user) {
       return { error: 'Invalid email or password' }
     }
 
-    // Create session token with explicit secret from env
+    // Create session token
     const secret = process.env.JWT_SECRET
     if (!secret) {
-      console.error('JWT_SECRET not found in environment')
       return { error: 'Server configuration error' }
     }
 
@@ -91,18 +90,9 @@ export async function login(formData: FormData) {
       { expiresIn: '7d' }
     )
 
-    console.log('Login: Setting cookie with token for user:', user.id)
-    console.log('Login: JWT_SECRET exists:', !!secret)
-
-    // Clear any existing cookies first
+    // Set cookie
     const cookieStore = await cookies()
-    try {
-      cookieStore.delete('citizenly-session')
-    } catch (e) {
-      // Cookie might not exist
-    }
-
-    // Set new cookie
+    cookieStore.delete('citizenly-session')
     cookieStore.set('citizenly-session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -111,69 +101,45 @@ export async function login(formData: FormData) {
       path: '/',
     })
 
-    // Update last login
-    await db.query(
-      'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1',
-      [user.id]
-    )
+    console.log('Login successful for:', email, 'role:', user.role)
+    return { success: true, user: { id: user.id, email: email, role: user.role } }
 
-    return { success: true, user: { id: user.id, email: user.email, role: user.role } }
   } catch (error) {
     console.error('Login error:', error)
-    if (error instanceof z.ZodError) {
-      return { error: error.errors[0].message }
-    }
     return { error: 'An error occurred during login' }
   }
 }
 
-// Register action (simplified)
+// Register action - MVP version (database-free)
 export async function register(formData: FormData) {
   try {
-    const rawData = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-      firstName: formData.get('firstName') as string,
-      lastName: formData.get('lastName') as string,
-      dateOfBirth: formData.get('dateOfBirth') as string,
-      role: (formData.get('role') as string) || 'citizen',
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const firstName = formData.get('firstName') as string
+    const lastName = formData.get('lastName') as string
+    const role = (formData.get('role') as string) || 'citizen'
+
+    if (!email || !password || !firstName || !lastName) {
+      return { error: 'All fields are required' }
     }
 
-    // Validate input
-    const validatedData = RegisterSchema.parse(rawData)
-
-    // Check if user already exists
-    const existingUser = await db.query(
-      'SELECT id FROM users WHERE email = $1',
-      [validatedData.email]
-    )
-
-    if (existingUser.rows.length > 0) {
-      return { error: 'An account with this email already exists' }
-    }
-
-    // Insert new user (no password hash needed for MVP)
-    const result = await db.query(
-      `INSERT INTO users (email, password_hash, first_name, last_name, date_of_birth, role, verification_status, email_verified, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, 'verified', true, true)
-       RETURNING id`,
-      [
-        validatedData.email,
-        'simple-mvp-password', // Placeholder
-        validatedData.firstName,
-        validatedData.lastName,
-        validatedData.dateOfBirth,
-        validatedData.role,
-      ]
-    )
-
-    const userId = result.rows[0].id
-
+    // For MVP: Simulate user creation (no actual database)
+    const newUserId = `${role}-${Date.now()}`
+    
     // Create session token
-    const sessionToken = createSessionToken(userId)
+    const secret = process.env.JWT_SECRET
+    if (!secret) {
+      return { error: 'Server configuration error' }
+    }
+
+    const sessionToken = jwt.sign(
+      { userId: newUserId, type: 'session' },
+      secret,
+      { expiresIn: '7d' }
+    )
 
     // Set cookie
-    const cookieStore = await cookies();
+    const cookieStore = await cookies()
     cookieStore.set('citizenly-session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -182,12 +148,10 @@ export async function register(formData: FormData) {
       path: '/',
     })
 
+    console.log('Registration successful for:', email, 'role:', role)
     return { success: true }
   } catch (error) {
     console.error('Registration error:', error)
-    if (error instanceof z.ZodError) {
-      return { error: error.errors[0].message }
-    }
     return { error: 'An error occurred during registration' }
   }
 }
